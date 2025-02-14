@@ -84,3 +84,5 @@ app.post('/stop', (req, res) => {
 app.get('/activity/manifest.json/config.js', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'config.js'));
 });
+
+app.use(express.static('public')); // Para servir arquivos estáticos como o ícone
