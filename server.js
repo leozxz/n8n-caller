@@ -85,3 +85,6 @@ app.get('/activity/manifest.json/config.js', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'config.js'));
 });
 
+app.get('/config.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'config.js'));
+});
