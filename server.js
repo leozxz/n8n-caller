@@ -85,4 +85,9 @@ app.get('/activity/manifest.json/config.js', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'config.js'));
 });
 
-app.use(express.static('public')); // Para servir arquivos estáticos como o ícone
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    next();
+});
