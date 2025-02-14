@@ -98,3 +98,8 @@ app.use(cors({
   methods: 'GET,POST,OPTIONS',
   allowedHeaders: 'Content-Type, Authorization'
 }));
+
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src *; connect-src *; script-src *; style-src *;");
+    next();
+});
