@@ -1,7 +1,7 @@
 {
   "workflowApiVersion": "1.1",
   "metaData": {
-    "icon": "https://seu-app-no-render.onrender.com/icon.png",
+    "icon": "https://n8n-caller.onrender.com/icon.png",
     "category": "message"
   },
   "type": "REST",
@@ -43,7 +43,7 @@
         "outArguments": [],
         "execute": {
           "verb": "POST",
-          "url": "https://seu-app-no-render.onrender.com/execute",
+          "url": "https://n8n-caller.onrender.com/execute",
           "body": "{}",
           "header": {
             "Content-Type": "application/json"
@@ -55,21 +55,21 @@
   "configurationArguments": {
     "applicationExtensionKey": "custom-activity",
     "save": {
-      "url": "https://seu-app-no-render.onrender.com/save"
+      "url": "https://n8n-caller.onrender.com/save"
     },
     "publish": {
-      "url": "https://seu-app-no-render.onrender.com/publish"
+      "url": "https://n8n-caller.onrender.com/publish"
     },
     "validate": {
-      "url": "https://seu-app-no-render.onrender.com/validate"
+      "url": "https://n8n-caller.onrender.com/validate"
     },
     "stop": {
-      "url": "https://seu-app-no-render.onrender.com/stop"
+      "url": "https://n8n-caller.onrender.com/stop"
     }
   },
   "userInterfaces": {
     "configModal": {
-      "url": "https://seu-app-no-render.onrender.com/index.html",
+      "url": "https://n8n-caller.onrender.com/index.html",
       "height": 300,
       "width": 400
     }
