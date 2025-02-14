@@ -56,6 +56,11 @@ app.get('/activity/manifest.json', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'manifest.json'));
 });
 
+app.get('/', (req, res) => {
+    res.send('Servidor rodando! 🚀');
+});
+
+
 app.post('/validate', (req, res) => {
     console.log("Validando atividade...");
     res.json({ success: true });
