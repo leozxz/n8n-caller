@@ -11,6 +11,9 @@
       "description": "Envia dados da Data Extension para um Webhook do n8n"
     }
   },
+  "configurationArguments": {
+    "configUrl": "https://n8n-caller.onrender.com/config.js"
+  },
   "schema": {
     "arguments": {
       "execute": {
@@ -50,21 +53,6 @@
           }
         }
       }
-    }
-  },
-  "configurationArguments": {
-    "applicationExtensionKey": "custom-activity",
-    "save": {
-      "url": "https://n8n-caller.onrender.com/save"
-    },
-    "publish": {
-      "url": "https://n8n-caller.onrender.com/publish"
-    },
-    "validate": {
-      "url": "https://n8n-caller.onrender.com/validate"
-    },
-    "stop": {
-      "url": "https://n8n-caller.onrender.com/stop"
     }
   },
   "userInterfaces": {
