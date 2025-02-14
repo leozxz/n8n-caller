@@ -2,7 +2,10 @@
   "workflowApiVersion": "1.1",
   "metaData": {
     "icon": "https://n8n-caller.onrender.com/icon.png",
-    "category": "message"
+    "category": "message",
+    "customIcon": {
+      "iconDefault": "https://n8n-caller.onrender.com/icon.png"
+    }
   },
   "type": "REST",
   "lang": {
