@@ -10,30 +10,31 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// Simulação de busca na Data Extension
-async function buscarDadosDaDataExtension() {
-    return [
-        { email: "user1@email.com", nome: "Usuário 1", telefone: "11999999999" },
-        { email: "user2@email.com", nome: "Usuário 2", telefone: "11988888888" }
-    ];
-}
-
 // Quando o Journey Builder aciona a Custom Activity
 app.post('/execute', async (req, res) => {
     console.log("Executando a atividade...");
 
-    const webhookUrl = req.body.arguments.execute.inArguments.find(arg => arg.webhookUrl)?.webhookUrl;
+    const inArguments = req.body.arguments.execute.inArguments || [];
+
+    // Encontra o webhook salvo na Custom Activity
+    const webhookUrl = inArguments.find(arg => arg.webhookUrl)?.webhookUrl;
 
     if (!webhookUrl) {
         console.error("Erro: Nenhum webhook configurado.");
         return res.status(400).json({ success: false, message: "Nenhum webhook configurado." });
     }
 
-    try {
-        const dados = await buscarDadosDaDataExtension();
+    // Remove o webhookUrl dos argumentos para pegar apenas os dados da Data Extension
+    const dadosParaEnvio = inArguments.filter(arg => !arg.webhookUrl);
 
+    if (dadosParaEnvio.length === 0) {
+        console.error("Erro: Nenhum dado encontrado na Data Extension.");
+        return res.status(400).json({ success: false, message: "Nenhum dado encontrado na Data Extension." });
+    }
+
+    try {
         // Envia os dados para o webhook do n8n
-        const response = await axios.post(webhookUrl, { data: dados });
+        const response = await axios.post(webhookUrl, { data: dadosParaEnvio });
 
         console.log("Dados enviados para o webhook com sucesso!", response.data);
 
