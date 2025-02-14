@@ -82,9 +82,6 @@ app.post('/stop', (req, res) => {
 });
 
 app.get('/activity/manifest.json/config.js', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'config.js'));
+    res.redirect('/config.js'); // Redireciona para a URL correta
 });
 
-app.get('/config.js', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'config.js'));
-});
