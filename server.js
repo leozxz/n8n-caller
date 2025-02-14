@@ -2,78 +2,41 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
-const cors = require('cors');
-const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configuração de CORS para permitir requisições do Marketing Cloud
+const cors = require('cors');
+
 app.use(cors({
-  origin: '*', // Permite qualquer origem
+  origin: '*', // Permite qualquer origem acessar
   methods: 'GET,POST,OPTIONS',
   allowedHeaders: 'Content-Type, Authorization'
 }));
 
+// Middleware para corrigir CORS no Marketing Cloud
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.header("Access-Control-Allow-Origin", "*"); // Permite qualquer origem
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS"); // Métodos permitidos
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Headers permitidos
+    res.header("Access-Control-Allow-Credentials", "true"); // Permite credenciais, se necessário
     if (req.method === "OPTIONS") {
-        return res.sendStatus(200);
+        return res.sendStatus(200); // Responde rapidamente para requisições OPTIONS
     }
     next();
 });
 
-// Middleware para Content Security Policy
-app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy", "default-src 'self' https:; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; connect-src 'self' https:;");
-    next();
-});
-
-// Middlewares padrão
+// Middlewares
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// Rota para validar a Custom Activity
-app.post('/validate', (req, res) => {
-    console.log("Validando atividade...");
-    res.json({ success: true });
-});
-
-// Rota para salvar configurações
-app.post('/save', (req, res) => {
-    console.log("Salvando atividade...");
-    res.json({ success: true });
-});
-
-// Rota para publicar a atividade
-app.post('/publish', (req, res) => {
-    console.log("Publicando atividade...");
-    res.json({ success: true });
-});
-
-// Rota para parar a atividade
-app.post('/stop', (req, res) => {
-    console.log("Parando atividade...");
-    res.json({ success: true });
-});
-
-// Rota principal para o Marketing Cloud buscar o `manifest.json`
-app.get('/activity/manifest.json', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'manifest.json'));
-});
-
-// Rota correta para carregar o `config.js`
-app.get('/activity/config.js', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'config.js'));
-});
-
-// Rota para executar a Custom Activity no Journey Builder
+// Quando o Journey Builder aciona a Custom Activity
 app.post('/execute', async (req, res) => {
     console.log("Executando a atividade...");
 
     const inArguments = req.body.arguments.execute.inArguments || [];
+
+    // Encontra o webhook salvo na Custom Activity
     const webhookUrl = inArguments.find(arg => arg.webhookUrl)?.webhookUrl;
 
     if (!webhookUrl) {
@@ -81,6 +44,7 @@ app.post('/execute', async (req, res) => {
         return res.status(400).json({ success: false, message: "Nenhum webhook configurado." });
     }
 
+    // Remove o webhookUrl dos argumentos para pegar apenas os dados da Data Extension
     const dadosParaEnvio = inArguments.filter(arg => !arg.webhookUrl);
 
     if (dadosParaEnvio.length === 0) {
@@ -89,8 +53,11 @@ app.post('/execute', async (req, res) => {
     }
 
     try {
+        // Envia os dados para o webhook do n8n
         const response = await axios.post(webhookUrl, { data: dadosParaEnvio });
+
         console.log("Dados enviados para o webhook com sucesso!", response.data);
+
         res.json({ success: true });
     } catch (error) {
         console.error("Erro ao enviar para o webhook:", error);
@@ -98,12 +65,47 @@ app.post('/execute', async (req, res) => {
     }
 });
 
-// Rota de teste para verificar se o servidor está rodando
+// Inicia o servidor
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+});
+
+const path = require('path');
+
+app.get('/activity/manifest.json', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'manifest.json'));
+});
+
 app.get('/', (req, res) => {
     res.send('Servidor rodando! 🚀');
 });
 
-// Inicia o servidor
-app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
+
+app.post('/validate', (req, res) => {
+    console.log("Validando atividade...");
+    res.json({ success: true });
+});
+
+app.post('/save', (req, res) => {
+    console.log("Salvando atividade...");
+    res.json({ success: true });
+});
+
+app.post('/publish', (req, res) => {
+    console.log("Publicando atividade...");
+    res.json({ success: true });
+});
+
+app.post('/stop', (req, res) => {
+    console.log("Parando atividade...");
+    res.json({ success: true });
+});
+
+app.get('/activity/manifest.json/config.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'config.js'));
+});
+
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src *; connect-src *; script-src *; style-src *;");
+    next();
 });
