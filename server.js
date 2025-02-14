@@ -80,3 +80,8 @@ app.post('/stop', (req, res) => {
     console.log("Parando atividade...");
     res.json({ success: true });
 });
+
+app.get('/activity/manifest.json/config.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'config.js'));
+});
+
