@@ -49,3 +49,7 @@ app.post('/execute', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
 });
+
+app.get('/activity/manifest.json', (req, res) => {
+    res.sendFile(__dirname + '/public/manifest.json');
+});

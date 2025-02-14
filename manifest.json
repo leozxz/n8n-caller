@@ -1,0 +1,77 @@
+{
+  "workflowApiVersion": "1.1",
+  "metaData": {
+    "icon": "https://seu-app-no-render.onrender.com/icon.png",
+    "category": "message"
+  },
+  "type": "REST",
+  "lang": {
+    "en-US": {
+      "name": "Enviar para Webhook",
+      "description": "Envia dados da Data Extension para um Webhook do n8n"
+    }
+  },
+  "schema": {
+    "arguments": {
+      "execute": {
+        "inArguments": [
+          {
+            "webhookUrl": {
+              "dataType": "Text",
+              "isRequired": true
+            }
+          },
+          {
+            "email": {
+              "dataType": "Text",
+              "isRequired": true
+            }
+          },
+          {
+            "nome": {
+              "dataType": "Text",
+              "isRequired": true
+            }
+          },
+          {
+            "telefone": {
+              "dataType": "Text",
+              "isRequired": false
+            }
+          }
+        ],
+        "outArguments": [],
+        "execute": {
+          "verb": "POST",
+          "url": "https://seu-app-no-render.onrender.com/execute",
+          "body": "{}",
+          "header": {
+            "Content-Type": "application/json"
+          }
+        }
+      }
+    }
+  },
+  "configurationArguments": {
+    "applicationExtensionKey": "custom-activity",
+    "save": {
+      "url": "https://seu-app-no-render.onrender.com/save"
+    },
+    "publish": {
+      "url": "https://seu-app-no-render.onrender.com/publish"
+    },
+    "validate": {
+      "url": "https://seu-app-no-render.onrender.com/validate"
+    },
+    "stop": {
+      "url": "https://seu-app-no-render.onrender.com/stop"
+    }
+  },
+  "userInterfaces": {
+    "configModal": {
+      "url": "https://seu-app-no-render.onrender.com/index.html",
+      "height": 300,
+      "width": 400
+    }
+  }
+}
