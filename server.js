@@ -55,3 +55,23 @@ const path = require('path');
 app.get('/activity/manifest.json', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'manifest.json'));
 });
+
+app.post('/validate', (req, res) => {
+    console.log("Validando atividade...");
+    res.json({ success: true });
+});
+
+app.post('/save', (req, res) => {
+    console.log("Salvando atividade...");
+    res.json({ success: true });
+});
+
+app.post('/publish', (req, res) => {
+    console.log("Publicando atividade...");
+    res.json({ success: true });
+});
+
+app.post('/stop', (req, res) => {
+    console.log("Parando atividade...");
+    res.json({ success: true });
+});
