@@ -91,3 +91,10 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
     next();
 });
+
+const cors = require('cors');
+app.use(cors({
+  origin: '*',
+  methods: 'GET,POST,OPTIONS',
+  allowedHeaders: 'Content-Type, Authorization'
+}));
