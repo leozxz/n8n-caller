@@ -53,5 +53,5 @@ app.listen(PORT, () => {
 const path = require('path');
 
 app.get('/activity/manifest.json', (req, res) => {
-    res.sendFile(path.join(__dirname, 'manifest.json'));
+    res.sendFile(path.join(__dirname, 'public', 'manifest.json'));
 });
