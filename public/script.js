@@ -1,4 +1,5 @@
 var connection = new Postmonger.Session();
+import Postmonger from 'postmonger';
 var webhookUrl = "";
 
 connection.on('initActivity', function(payload) {
