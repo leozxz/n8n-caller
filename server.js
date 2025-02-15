@@ -59,12 +59,6 @@ app.get('/icon.png', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'icon.png'));
 });
 
-// 🔥 Validação da Custom Activity
-app.post('/validate', (req, res) => {
-    console.log("Validando atividade...");
-    res.json({ success: true });
-});
-
 // 🔥 Execução da Custom Activity
 app.post('/execute', async (req, res) => {
     console.log("Executando a atividade...");
@@ -101,11 +95,28 @@ app.get('/index.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// 🔥 Configurações adicionais do Marketing Cloud
 app.post('/save', (req, res) => {
-    console.log("Salvando atividade...");
+    console.log("🔹 Salvando atividade no backend...");
+
+    if (!req.body.arguments || !req.body.arguments.execute) {
+        return res.status(400).json({ success: false, message: "Payload inválido." });
+    }
+
+    const inArguments = req.body.arguments.execute.inArguments || [];
+    if (inArguments.length === 0 || !inArguments[0].webhookUrl) {
+        return res.status(400).json({ success: false, message: "Webhook não foi configurado." });
+    }
+
+    console.log("✅ Webhook salvo:", inArguments[0].webhookUrl);
     res.json({ success: true });
 });
+
+// Retorna a validação de configuração
+app.post('/validate', (req, res) => {
+    console.log("✅ Atividade validada.");
+    res.json({ success: true });
+});
+
 
 app.post('/publish', (req, res) => {
     console.log("Publicando atividade...");
