@@ -22,6 +22,12 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
     res.header("Access-Control-Allow-Credentials", "true");
     res.setHeader("Content-Security-Policy", "default-src 'self'; connect-src *; script-src 'self'; style-src 'self';");
+    res.setHeader("Content-Security-Policy", 
+        "default-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; " + 
+        "script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval'; " +
+        "style-src 'self' 'unsafe-inline'; " + 
+        "connect-src *;"
+    );
     if (req.method === "OPTIONS") {
         return res.sendStatus(200);
     }
