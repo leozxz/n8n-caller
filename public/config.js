@@ -1,13 +1,27 @@
-console.log("Config.js carregado!");
-define([], function() {
+define([], function () {
     return {
-        "execute": {
-            "inArguments": [{}],
-            "outArguments": [],
-            "url": "https://n8n-caller.onrender.com/execute",
-            "verb": "POST",
-            "body": "{}",
-            "header": { "Content-Type": "application/json" }
+        "workflowApiVersion": "1.1",
+        "metaData": {
+            "icon": "https://example.com/icon.png",
+            "category": "message"
+        },
+        "type": "REST",
+        "lang": {
+            "en-US": {
+                "name": "Enviar para Webhook",
+                "description": "Atividade que envia dados para um Webhook"
+            }
+        },
+        "configurationArguments": {
+            "configUrl": "https://seu-servidor.com/config.js"
+        },
+        "schema": {
+            "arguments": {
+                "execute": {
+                    "inArguments": [{ "webhookUrl": { "dataType": "Text", "isRequired": true } }],
+                    "outArguments": []
+                }
+            }
         }
     };
 });
