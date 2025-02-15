@@ -115,3 +115,8 @@ app.use(express.static('public'));
 app.get('/index.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src *; connect-src *; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';");
+    next();
+});
