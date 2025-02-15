@@ -2,3 +2,18 @@ body {
     font-family: Arial, sans-serif;
     padding: 20px;
 }
+/* Adicione isso ao seu arquivo CSS */
+#loading {
+    display: none;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.ok-message {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+}

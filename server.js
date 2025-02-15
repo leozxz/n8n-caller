@@ -8,6 +8,7 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const nonce = Buffer.from(Date.now().toString()).toString('base64');
 // 🔥 Permitir CORS Globalmente
 app.use(cors({
     origin: '*',
@@ -27,9 +28,15 @@ app.use((req, res, next) => {
         "default-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; " + 
         "script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval'; " +
         "style-src 'self' 'unsafe-inline'; " + 
-        "connect-src *;"
+        "connect-src *;" +
+        "default-src *; " +
+        "connect-src *; " +
+        "script-src * 'unsafe-inline' 'unsafe-eval'; " +
+        "style-src * 'unsafe-inline';" +
+        "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';"+ 
+        `style-src 'self' 'nonce-${nonce}'; script-src 'self' 'nonce-${nonce}';`
     );
-
+    res.locals.nonce = nonce;
     if (req.method === "OPTIONS") {
         return res.sendStatus(200);
     }
@@ -126,17 +133,6 @@ app.post('/publish', (req, res) => {
 app.post('/stop', (req, res) => {
     console.log("Parando atividade...");
     res.json({ success: true });
-});
-
-// 🔥 Adicionando segurança para permitir inline scripts e styles no Marketing Cloud
-app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy",
-        "default-src *; " +
-        "connect-src *; " +
-        "script-src * 'unsafe-inline' 'unsafe-eval'; " +
-        "style-src * 'unsafe-inline';"
-    );
-    next();
 });
 
 // 🔥 Inicia o servidor
