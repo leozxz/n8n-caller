@@ -15,7 +15,10 @@
     }
   },
   "configurationArguments": {
-    "configUrl": "https://n8n-caller.onrender.com/config.js"
+    "configUrl": "https://n8n-caller.onrender.com/activity/config.js",
+    "save": "https://n8n-caller.onrender.com/save",
+    "publish": "https://n8n-caller.onrender.com/publish",
+    "stop": "https://n8n-caller.onrender.com/stop"
   },
   "schema": {
     "arguments": {
@@ -50,7 +53,7 @@
         "execute": {
           "verb": "POST",
           "url": "https://n8n-caller.onrender.com/execute",
-          "body": "{}",
+          "body": "{ \"inArguments\": {{inArguments}} }",
           "header": {
             "Content-Type": "application/json"
           }
