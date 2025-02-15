@@ -106,6 +106,13 @@ app.get('/activity/manifest.json/config.js', (req, res) => {
 });
 
 app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy", "default-src *; connect-src * data: blob:; script-src * 'unsafe-inline'; style-src * 'unsafe-inline';");
+    res.setHeader("Content-Security-Policy",
+        "default-src 'self' https://*.exacttarget.com https://n8n-caller.onrender.com; " +
+        "script-src 'self' 'unsafe-inline' https://*.exacttarget.com https://n8n-caller.onrender.com; " +
+        "style-src 'self' 'unsafe-inline' https://*.exacttarget.com https://n8n-caller.onrender.com; " +
+        "connect-src 'self' https://*.exacttarget.com https://n8n-caller.onrender.com; " +
+        "img-src 'self' data: https://*.exacttarget.com https://n8n-caller.onrender.com; " +
+        "frame-src 'self' https://*.exacttarget.com https://n8n-caller.onrender.com;"
+    );
     next();
 });
