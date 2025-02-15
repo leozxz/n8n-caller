@@ -6,17 +6,23 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Habilitar CORS
+// Habilita CORS
 app.use(cors({
     origin: '*',
     methods: 'GET,POST,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization'
 }));
 
-// Middleware para servir arquivos estáticos
-app.use(express.static('public'));
+// Middleware para servir arquivos estáticos corretamente
+app.use(express.static(path.join(__dirname, 'public'), {
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.css')) {
+            res.setHeader('Content-Type', 'text/css');
+        }
+    }
+}));
 
-// Content Security Policy para evitar bloqueios do Marketing Cloud
+// Garante que Content-Security-Policy está bem definida
 app.use((req, res, next) => {
     res.setHeader("Content-Security-Policy",
         "default-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; " +
@@ -26,7 +32,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Servir arquivos
+// Servindo arquivos específicos corretamente
 app.get('/activity/manifest.json', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'manifest.json'));
 });
@@ -39,28 +45,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Rota de validação
-app.post('/validate', (req, res) => {
-    console.log("✅ Validando atividade...");
-    res.json({ success: true });
-});
-
-// Rota de execução da atividade
-app.post('/execute', (req, res) => {
-    console.log("✅ Executando a atividade...");
-
-    const inArguments = req.body.arguments.execute.inArguments || [];
-    const webhookUrl = inArguments.find(arg => arg.webhookUrl)?.webhookUrl;
-
-    if (!webhookUrl) {
-        return res.status(400).json({ success: false, message: "Nenhum webhook configurado." });
-    }
-
-    console.log("📤 Enviando para Webhook:", webhookUrl);
-    res.json({ success: true });
-});
-
-// Iniciar o servidor
+// Inicia o servidor
 app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });

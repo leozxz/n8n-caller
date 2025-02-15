@@ -1,7 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("✅ DOM carregado!");
 
-    const Postmonger = window.Postmonger;
+    if (!window.Postmonger) {
+        console.error("❌ Erro: Postmonger não foi carregado!");
+        return;
+    }
+
     const connection = new Postmonger.Session();
     let payload = {};
     let webhookUrl = "";
@@ -19,7 +23,13 @@ document.addEventListener("DOMContentLoaded", function () {
             payload.arguments.execute.inArguments = [{ webhookUrl: "" }];
         }
 
-        document.getElementById("webhookUrl").value = webhookUrl;
+        const webhookInput = document.getElementById("webhookUrl");
+        if (webhookInput) {
+            webhookInput.value = webhookUrl;
+        } else {
+            console.error("❌ Erro: Elemento webhookUrl não encontrado!");
+        }
+
         connection.trigger('ready');
     });
 
