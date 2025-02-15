@@ -6,16 +6,18 @@ document.addEventListener("DOMContentLoaded", function () {
     var payload = {};
     var webhookUrl = "";
 
-    // ✅ Garante que os elementos do DOM existem antes de continuar
+    // 🔥 Garante que os elementos do DOM existem antes de continuar
     function waitForElements(callback) {
         const interval = setInterval(() => {
             const webhookInput = document.getElementById("webhookUrl");
             const saveButton = document.getElementById("save");
             const doneButton = document.getElementById("done");
+            const loadingIndicator = document.getElementById("loading");
 
             if (webhookInput && saveButton && doneButton) {
                 clearInterval(interval);
                 console.log("✅ Elementos do DOM encontrados!");
+                loadingIndicator.style.display = "none"; // 🔥 Para o loading
                 callback(webhookInput, saveButton, doneButton);
             } else {
                 console.warn("⏳ Aguardando elementos do DOM...");
@@ -23,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 500);
     }
 
-    // ✅ Aguarda os elementos do DOM e então conecta o Postmonger
+    // 🔥 Aguarda os elementos do DOM antes de conectar o Postmonger
     waitForElements((webhookInput, saveButton, doneButton) => {
         // ✅ Escuta o evento initActivity para capturar os dados da atividade
         connection.on('initActivity', function (data) {
@@ -41,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             webhookInput.value = webhookUrl;
-            document.getElementById("loading").style.display = "none"; // Para o loading
+            loadingIndicator.style.display = "none"; // Para o loading
             connection.trigger('ready'); // 🔥 Agora só dispara quando o payload chega
         });
 
