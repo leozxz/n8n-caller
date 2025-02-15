@@ -6,22 +6,25 @@ document.addEventListener("DOMContentLoaded", function () {
     var payload = {};
     var webhookUrl = "";
 
-    // 🔥 Função para verificar se elementos do DOM foram carregados antes de executar
+    // 🔥 Desativa o loading se existir
+    function stopLoading() {
+        const loadingIndicator = document.getElementById("loading");
+        if (loadingIndicator) {
+            loadingIndicator.style.display = "none";
+        }
+    }
+
+    // 🔥 Verifica se os elementos do DOM existem antes de rodar
     function waitForElements(callback) {
         const interval = setInterval(() => {
             const webhookInput = document.getElementById("webhookUrl");
             const saveButton = document.getElementById("save");
             const doneButton = document.getElementById("done");
-            const loadingIndicator = document.getElementById("loading");
 
             if (webhookInput && saveButton && doneButton) {
                 clearInterval(interval);
                 console.log("✅ Elementos do DOM encontrados!");
-                
-                if (loadingIndicator) {
-                    loadingIndicator.style.display = "none"; // 🔥 Para o loading se o elemento existir
-                }
-
+                stopLoading();
                 callback(webhookInput, saveButton, doneButton);
             } else {
                 console.warn("⏳ Aguardando elementos do DOM...");
@@ -29,32 +32,29 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 500);
     }
 
-    // 🔥 Aguarda os elementos do DOM antes de conectar o Postmonger
+    // 🔥 Aguarda elementos do DOM antes de rodar lógica
     waitForElements((webhookInput, saveButton, doneButton) => {
         // ✅ Escuta o evento initActivity para capturar os dados da atividade
         connection.on('initActivity', function (data) {
             console.log("📢 Payload recebido:", data);
             payload = data || {};
 
+            // 🔥 Se `arguments.execute.inArguments` não existir, cria um fallback
             if (payload.arguments?.execute?.inArguments) {
                 webhookUrl = payload.arguments.execute.inArguments.find(arg => arg.webhookUrl)?.webhookUrl || "";
             } else {
-                console.warn("⚠️ inArguments não encontrado no payload. Criando um valor padrão.");
+                console.warn("⚠️ inArguments não encontrado. Criando valor padrão.");
                 webhookUrl = "";
                 payload.arguments = payload.arguments || {};
                 payload.arguments.execute = payload.arguments.execute || {};
-                payload.arguments.execute.inArguments = [{}];
+                payload.arguments.execute.inArguments = [{ webhookUrl: "" }];
             }
 
             webhookInput.value = webhookUrl;
+            stopLoading(); // 🔥 Remove o loading
 
-            // 🔥 Garante que o loading some se ele existir
-            const loadingIndicator = document.getElementById("loading");
-            if (loadingIndicator) {
-                loadingIndicator.style.display = "none";
-            }
-
-            connection.trigger('ready'); // 🔥 Agora só dispara quando o payload chega
+            // 🔥 Dispara o evento de pronto
+            connection.trigger('ready');
         });
 
         // ✅ Atualiza os dados ao clicar no botão "Salvar"
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
             connection.trigger('validateActivity');
         });
 
-        // 🔥 Dispara o primeiro evento para garantir a conexão
+        // 🔥 Dispara `initActivity` para garantir que os dados sejam carregados
         connection.trigger('initActivity');
     });
 });
