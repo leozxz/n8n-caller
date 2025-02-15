@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var payload = {};
     var webhookUrl = "";
 
-    // 🔥 Garante que os elementos do DOM existem antes de continuar
+    // 🔥 Função para verificar se elementos do DOM foram carregados antes de executar
     function waitForElements(callback) {
         const interval = setInterval(() => {
             const webhookInput = document.getElementById("webhookUrl");
@@ -17,7 +17,11 @@ document.addEventListener("DOMContentLoaded", function () {
             if (webhookInput && saveButton && doneButton) {
                 clearInterval(interval);
                 console.log("✅ Elementos do DOM encontrados!");
-                loadingIndicator.style.display = "none"; // 🔥 Para o loading
+                
+                if (loadingIndicator) {
+                    loadingIndicator.style.display = "none"; // 🔥 Para o loading se o elemento existir
+                }
+
                 callback(webhookInput, saveButton, doneButton);
             } else {
                 console.warn("⏳ Aguardando elementos do DOM...");
@@ -43,7 +47,13 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             webhookInput.value = webhookUrl;
-            loadingIndicator.style.display = "none"; // Para o loading
+
+            // 🔥 Garante que o loading some se ele existir
+            const loadingIndicator = document.getElementById("loading");
+            if (loadingIndicator) {
+                loadingIndicator.style.display = "none";
+            }
+
             connection.trigger('ready'); // 🔥 Agora só dispara quando o payload chega
         });
 
