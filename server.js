@@ -107,12 +107,17 @@ app.get('/activity/manifest.json/config.js', (req, res) => {
 
 app.use((req, res, next) => {
     res.setHeader("Content-Security-Policy",
-        "default-src 'self' https://*.exacttarget.com https://n8n-caller.onrender.com; " +
-        "script-src 'self' 'unsafe-inline' https://*.exacttarget.com https://n8n-caller.onrender.com; " +
-        "style-src 'self' 'unsafe-inline' https://*.exacttarget.com https://n8n-caller.onrender.com; " +
-        "connect-src 'self' https://*.exacttarget.com https://n8n-caller.onrender.com; " +
-        "img-src 'self' data: https://*.exacttarget.com https://n8n-caller.onrender.com; " +
-        "frame-src 'self' https://*.exacttarget.com https://n8n-caller.onrender.com;"
+        "default-src * 'unsafe-inline' 'unsafe-eval' blob: data:; " +
+        "script-src * 'unsafe-inline' 'unsafe-eval' blob: data:; " +
+        "style-src * 'unsafe-inline' blob: data:; " +
+        "connect-src *; " +
+        "img-src * data: blob:; " +
+        "frame-src *;"
     );
+
+    res.setHeader("X-Frame-Options", "ALLOWALL"); // Permite exibição dentro de iframe
+    res.setHeader("Permissions-Policy", "interest-cohort=()"); // Desativa restrições do Marketing Cloud
+
     next();
 });
+
