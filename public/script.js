@@ -1,8 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("✅ DOM carregado!");
 
+    // 🔥 Verifica se o Postmonger foi carregado
     if (!window.Postmonger) {
-        console.error("❌ Erro: Postmonger não foi carregado!");
+        console.error("❌ ERRO: Postmonger não foi carregado!");
         return;
     }
 
@@ -27,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (webhookInput) {
             webhookInput.value = webhookUrl;
         } else {
-            console.error("❌ Erro: Elemento webhookUrl não encontrado!");
+            console.error("❌ ERRO: Elemento webhookUrl não encontrado!");
         }
 
         connection.trigger('ready');

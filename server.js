@@ -6,14 +6,14 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Habilita CORS
+// 🔥 Configura CORS
 app.use(cors({
     origin: '*',
     methods: 'GET,POST,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization'
 }));
 
-// Middleware para servir arquivos estáticos corretamente
+// 🔥 Servir arquivos estáticos com o MIME correto
 app.use(express.static(path.join(__dirname, 'public'), {
     setHeaders: (res, filePath) => {
         if (filePath.endsWith('.css')) {
@@ -22,25 +22,17 @@ app.use(express.static(path.join(__dirname, 'public'), {
     }
 }));
 
-// Garante que Content-Security-Policy está bem definida
-app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy",
-        "default-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; " +
-        "script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval'; " +
-        "style-src 'self' 'unsafe-inline'; " +
-        "connect-src *;");
-    next();
-});
-
-// Servindo arquivos específicos corretamente
+// 🔥 Rota para `manifest.json`
 app.get('/activity/manifest.json', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'manifest.json'));
 });
 
+// 🔥 Rota para `config.js`
 app.get('/activity/config.js', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'config.js'));
 });
 
+// 🔥 Rota para página principal
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
