@@ -2,30 +2,29 @@ const Postmonger = window.Postmonger;
 var connection = new Postmonger.Session();
 var webhookUrl = "";
 
-// Inicializa a atividade ao receber o evento do Journey Builder
 connection.on('initActivity', function(payload) {
     console.log("Payload recebido:", payload);
 
-    // Verifica se os argumentos da execução contêm inArguments antes de acessá-los
-    if (payload?.arguments?.execute?.inArguments && payload.arguments.execute.inArguments.length > 0) {
-        webhookUrl = payload.arguments.execute.inArguments[0]?.webhookUrl || "";
+    if (payload.arguments && payload.arguments.execute && payload.arguments.execute.inArguments) {
+        webhookUrl = payload.arguments.execute.inArguments.find(arg => arg.webhookUrl)?.webhookUrl || "";
     } else {
-        console.error("Erro: inArguments não encontrado no payload.");
         webhookUrl = "";
+        console.error("inArguments não encontrado no payload.");
     }
 
     document.getElementById('webhookUrl').value = webhookUrl;
 });
 
-// Adiciona evento para salvar a configuração da atividade
 document.getElementById('save').addEventListener('click', function() {
     webhookUrl = document.getElementById('webhookUrl').value;
 
-    // Garante que os argumentos são formatados corretamente antes de serem enviados
     var activityPayload = {
+        name: "Enviar para Webhook",
         arguments: {
             execute: {
-                inArguments: webhookUrl ? [{ webhookUrl: webhookUrl }] : [],
+                inArguments: [
+                    { webhookUrl: webhookUrl }
+                ],
                 outArguments: []
             }
         }
@@ -35,5 +34,4 @@ document.getElementById('save').addEventListener('click', function() {
     connection.trigger('updateActivity', activityPayload);
 });
 
-// Dispara o evento de prontidão para sinalizar que a atividade está inicializada
 connection.trigger('ready');

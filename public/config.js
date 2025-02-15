@@ -1,6 +1,13 @@
-define([], function () {
+console.log("Config.js carregado!");
+define([], function() {
     return {
-        logLevel: "debug",
-        endpoints: {}
+        "execute": {
+            "inArguments": [{}],
+            "outArguments": [],
+            "url": "https://n8n-caller.onrender.com/execute",
+            "verb": "POST",
+            "body": "{}",
+            "header": { "Content-Type": "application/json" }
+        }
     };
 });

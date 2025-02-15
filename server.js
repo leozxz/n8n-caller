@@ -68,11 +68,18 @@ app.post('/validate', (req, res) => {
 // 🔥 Execução da Custom Activity
 app.post('/execute', async (req, res) => {
     console.log("Executando a atividade...");
+    console.log("Payload recebido:", JSON.stringify(req.body, null, 2));
 
-    const inArguments = req.body.arguments?.execute?.inArguments || [];
+    if (!req.body.arguments || !req.body.arguments.execute || !req.body.arguments.execute.inArguments) {
+        console.error("Erro: inArguments não encontrado no payload.");
+        return res.status(400).json({ success: false, message: "Erro: inArguments não encontrado no payload." });
+    }
+
+    const inArguments = req.body.arguments.execute.inArguments;
     const webhookUrl = inArguments.find(arg => arg.webhookUrl)?.webhookUrl;
 
     if (!webhookUrl) {
+        console.error("Erro: Nenhum webhook configurado.");
         return res.status(400).json({ success: false, message: "Nenhum webhook configurado." });
     }
 
@@ -87,6 +94,7 @@ app.post('/execute', async (req, res) => {
         res.status(500).json({ success: false, message: "Erro ao enviar os dados para o webhook." });
     }
 });
+
 
 // 🔥 Configuração do index.html para a UI
 app.get('/index.html', (req, res) => {
