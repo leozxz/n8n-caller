@@ -10,9 +10,9 @@ const PORT = process.env.PORT || 3000;
 
 // 🔥 Permitir CORS Globalmente
 app.use(cors({
-  origin: '*',
-  methods: 'GET,POST,OPTIONS',
-  allowedHeaders: 'Content-Type, Authorization'
+    origin: '*',
+    methods: 'GET,POST,OPTIONS',
+    allowedHeaders: 'Content-Type, Authorization'
 }));
 
 // 🔥 Middleware para permitir requisições do Marketing Cloud
@@ -21,24 +21,31 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
     res.header("Access-Control-Allow-Credentials", "true");
-    res.setHeader("Content-Security-Policy", "default-src 'self'; connect-src *; script-src 'self'; style-src 'self';");
-    res.setHeader("Content-Security-Policy", 
+
+    // 🔥 Melhorando a Content Security Policy para suportar scripts e conexões externas
+    res.setHeader("Content-Security-Policy",
         "default-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; " + 
         "script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval'; " +
         "style-src 'self' 'unsafe-inline'; " + 
         "connect-src *;"
     );
+
     if (req.method === "OPTIONS") {
         return res.sendStatus(200);
     }
     next();
 });
 
-// Servindo arquivos estáticos corretamente
+// 🔥 Servindo arquivos estáticos corretamente
 app.use(express.static('public'));
 
-// 🔥 Corrigindo a rota do `manifest.json`
+// 🔥 Corrigindo o carregamento do `manifest.json`
 app.get('/activity/manifest.json', (req, res) => {
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
     res.sendFile(path.join(__dirname, 'public', 'manifest.json'));
 });
 
@@ -62,7 +69,7 @@ app.post('/validate', (req, res) => {
 app.post('/execute', async (req, res) => {
     console.log("Executando a atividade...");
 
-    const inArguments = req.body.arguments.execute.inArguments || [];
+    const inArguments = req.body.arguments?.execute?.inArguments || [];
     const webhookUrl = inArguments.find(arg => arg.webhookUrl)?.webhookUrl;
 
     if (!webhookUrl) {
@@ -81,6 +88,11 @@ app.post('/execute', async (req, res) => {
     }
 });
 
+// 🔥 Configuração do index.html para a UI
+app.get('/index.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // 🔥 Configurações adicionais do Marketing Cloud
 app.post('/save', (req, res) => {
     console.log("Salvando atividade...");
@@ -97,26 +109,18 @@ app.post('/stop', (req, res) => {
     res.json({ success: true });
 });
 
-// Inicia o servidor
-app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
-});
-
-app.get('/activity/manifest.json', (req, res) => {
-    res.setHeader("Content-Type", "application/json");
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
-    res.sendFile(path.join(__dirname, 'public', 'manifest.json'));
-});
-
-app.use(express.static('public'));
-app.get('/index.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
+// 🔥 Adicionando segurança para permitir inline scripts e styles no Marketing Cloud
 app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy", "default-src *; connect-src *; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';");
+    res.setHeader("Content-Security-Policy",
+        "default-src *; " +
+        "connect-src *; " +
+        "script-src * 'unsafe-inline' 'unsafe-eval'; " +
+        "style-src * 'unsafe-inline';"
+    );
     next();
+});
+
+// 🔥 Inicia o servidor
+app.listen(PORT, () => {
+    console.log(`✅ Servidor rodando na porta ${PORT}`);
 });
