@@ -106,6 +106,6 @@ app.get('/activity/manifest.json/config.js', (req, res) => {
 });
 
 app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy", "default-src *; connect-src *; script-src *; style-src *;");
+    res.setHeader("Content-Security-Policy", "default-src *; connect-src * data: blob:; script-src * 'unsafe-inline'; style-src * 'unsafe-inline';");
     next();
 });
