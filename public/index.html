@@ -5,47 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Custom Activity - Webhook</title>
     <script src="https://cdn.jsdelivr.net/npm/postmonger"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h2>Configurar Webhook</h2>
     <label for="webhookUrl">Endpoint do Webhook (n8n):</label>
     <input type="text" id="webhookUrl" placeholder="https://n8n.meuwebhook.com/" />
     <button id="save">Salvar</button>
-
-    <script>
-        var connection = new Postmonger.Session();
-        var webhookUrl = "";
-
-        connection.on('initActivity', function(payload) {
-            console.log("Payload recebido:", payload);
-            webhookUrl = payload.arguments.execute.inArguments[0]?.webhookUrl || "";
-            document.getElementById('webhookUrl').value = webhookUrl;
-        });
-
-        document.getElementById('save').addEventListener('click', function() {
-            webhookUrl = document.getElementById('webhookUrl').value;
-
-            var activityPayload = {
-                arguments: {
-                    execute: {
-                        inArguments: [
-                            { webhookUrl: webhookUrl }
-                        ],
-                        outArguments: []
-                    }
-                }
-            };
-
-            connection.trigger('updateActivity', activityPayload);
-        });
-
-        connection.trigger('ready');
-    </script>
+    
+    <script src="script.js"></script>
 </body>
 </html>

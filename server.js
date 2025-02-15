@@ -21,7 +21,7 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
     res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Content-Security-Policy", "default-src *; connect-src *; script-src *; style-src *;");
+    res.setHeader("Content-Security-Policy", "default-src 'self'; connect-src *; script-src 'self'; style-src 'self';");
     if (req.method === "OPTIONS") {
         return res.sendStatus(200);
     }
@@ -103,4 +103,9 @@ app.get('/activity/manifest.json', (req, res) => {
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
     res.sendFile(path.join(__dirname, 'public', 'manifest.json'));
+});
+
+app.use(express.static('public'));
+app.get('/index.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
